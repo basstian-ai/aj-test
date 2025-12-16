@@ -59,6 +59,8 @@
             <div class="badge-group" id="contractBadges"></div>
           </div>
 
+          <div class="insight-grid" id="insightGrid"></div>
+
           <div class="card-grid">
             <div class="card">
               <div class="card-head">
@@ -91,14 +93,45 @@
               <p>Ingen støy – kun produktene i avtalen, med lagerstatus og leveringstid.</p>
             </div>
             <div class="filters">
-              <label for="availabilityFilter">Vis</label>
-              <select id="availabilityFilter">
-                <option value="all">Alle</option>
-                <option value="inStock">På lager</option>
-                <option value="onOrder">Under innkjøp</option>
-              </select>
+              <div class="filter-group">
+                <label for="availabilityFilter">Vis</label>
+                <select id="availabilityFilter">
+                  <option value="all">Alle</option>
+                  <option value="inStock">På lager</option>
+                  <option value="onOrder">Under innkjøp</option>
+                </select>
+              </div>
+              <div class="filter-group">
+                <label for="productSearch">Søk eller filtrer</label>
+                <div class="input-with-icon">
+                  <span aria-hidden="true">🔎</span>
+                  <input
+                    id="productSearch"
+                    type="search"
+                    placeholder="Søk på navn, SKU eller kategori"
+                    aria-label="Søk etter avtaleprodukter"
+                  />
+                </div>
+              </div>
+              <div class="filter-group">
+                <label for="sortSelect">Sorter</label>
+                <select id="sortSelect">
+                  <option value="relevance">Relevans</option>
+                  <option value="priceAsc">Pris (lav til høy)</option>
+                  <option value="priceDesc">Pris (høy til lav)</option>
+                  <option value="stock">Lagerstatus</option>
+                </select>
+              </div>
             </div>
           </div>
+          <div class="table-head" role="row">
+            <span>Produkt</span>
+            <span>Pris</span>
+            <span>Tilgjengelighet</span>
+            <span>Antall</span>
+            <span class="muted">Notat</span>
+          </div>
+          <div id="productCount" class="table-meta small"></div>
           <div class="table" role="table" aria-label="Avtaleprodukter" id="productTable"></div>
         </section>
 

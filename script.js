@@ -9,6 +9,11 @@ const customers = {
       { label: 'Leveringsbetingelser', value: '48t standard, ekspress etter avtale' },
       { label: 'Betaling', value: 'Faktura EHF, 30 dager' },
     ],
+    insights: [
+      { label: 'Leveringsgrad', value: '87% på tid', description: 'Siste 30 dager med avtalelevering', chip: 'SLA' },
+      { label: 'Neste milepæl', value: '12. mar', description: 'Skap og garderobe på vei' },
+      { label: 'Repeterende kjøp', value: 'Lagerpåfyll uke 10', description: 'Hold kostnader på avtalepris' },
+    ],
     statuses: [
       { title: 'Siste ordre', value: '#23144', subtitle: 'Leveres 12. mars', tone: 'success', pill: 'På vei' },
       { title: 'Ordre under behandling', value: '4', subtitle: '2 med ekspress', tone: 'warning', pill: 'Produksjon' },
@@ -169,6 +174,11 @@ const customers = {
       { label: 'Leveringsbetingelser', value: 'Fast rute tirsdag, ekspress på forespørsel' },
       { label: 'Betaling', value: 'Faktura PDF, 20 dager' },
     ],
+    insights: [
+      { label: 'Fast rute', value: 'Tirsdag', description: 'Pålitelig levering hver uke', chip: 'Logistikk' },
+      { label: 'Godkjenningsstatus', value: '1 venter', description: 'Camilla venter godkjenning' },
+      { label: 'Leveringsgrad', value: '92% på tid', description: 'Siste 30 dager med SLA' },
+    ],
     statuses: [
       { title: 'Siste ordre', value: '#1204', subtitle: 'Leveres tirsdag', tone: 'success', pill: 'Fast rute' },
       { title: 'Ordre under behandling', value: '1', subtitle: 'Ventende godkjenning', tone: 'warning', pill: 'Venter' },
@@ -233,7 +243,11 @@ const elements = {
   contractBadges: document.getElementById('contractBadges'),
   quickActions: document.getElementById('quickActions'),
   statusGrid: document.getElementById('statusGrid'),
+  insightGrid: document.getElementById('insightGrid'),
   productTable: document.getElementById('productTable'),
+  productSearch: document.getElementById('productSearch'),
+  productCount: document.getElementById('productCount'),
+  sortSelect: document.getElementById('sortSelect'),
   availabilityFilter: document.getElementById('availabilityFilter'),
   listContainer: document.getElementById('listContainer'),
   packageContainer: document.getElementById('packageContainer'),
@@ -279,6 +293,23 @@ function renderContractSection(customer) {
     .join('');
 }
 
+function renderInsights(customer) {
+  elements.insightGrid.innerHTML = customer.insights
+    .map(
+      (insight) => `
+        <article class="insight-card">
+          <div class="label-row">
+            <span class="eyebrow">${insight.label}</span>
+            ${insight.chip ? `<span class="insight-chip">${insight.chip}</span>` : ''}
+          </div>
+          <strong>${insight.value}</strong>
+          <p class="hint">${insight.description}</p>
+        </article>
+      `
+    )
+    .join('');
+}
+
 function renderStatus(customer) {
   elements.statusGrid.innerHTML = customer.statuses
     .map(
@@ -315,42 +346,69 @@ function renderQuickActions(customer) {
 
 function renderProducts(customer) {
   const filter = elements.availabilityFilter.value;
-  const filtered = customer.products.filter((product) => {
-    if (filter === 'inStock') return product.stock === 'På lager';
-    if (filter === 'onOrder') return product.stock !== 'På lager';
-    return true;
-  });
+  const searchTerm = elements.productSearch.value.trim().toLowerCase();
+  const sort = elements.sortSelect.value;
 
-  elements.productTable.innerHTML = filtered
-    .map((product) => {
-      const dotClass =
-        product.stock === 'På lager' ? 'dot' : product.stock === 'Lav beholdning' ? 'dot warning' : 'dot danger';
-      return `
-        <div class="table-row" data-sku="${product.sku}">
-          <div class="product-meta">
-            <strong>${product.name}</strong>
-            <p class="small">${product.category} · Minstekjøp ${product.minOrder} stk</p>
-          </div>
-          <div class="price-row">
-            <span class="old-price">${product.price.toLocaleString('no-NO')} ,-</span>
-            <span class="new-price">${product.contractPrice.toLocaleString('no-NO')} ,-</span>
-          </div>
-          <div class="stock">
-            <span class="${dotClass}"></span>
-            <div>
-              <strong>${product.stock}</strong>
-              <p class="small">Levering: ${product.leadTime}</p>
+  const matchesFilters = (product) => {
+    const availabilityMatch =
+      filter === 'all' || (filter === 'inStock' && product.stock === 'På lager') || (filter === 'onOrder' && product.stock !== 'På lager');
+    const textMatch =
+      !searchTerm ||
+      product.name.toLowerCase().includes(searchTerm) ||
+      product.sku.toLowerCase().includes(searchTerm) ||
+      product.category.toLowerCase().includes(searchTerm);
+    return availabilityMatch && textMatch;
+  };
+
+  const stockRank = (stock) => {
+    if (stock === 'På lager') return 0;
+    if (stock === 'Lav beholdning') return 1;
+    return 2;
+  };
+
+  const filtered = customer.products
+    .filter(matchesFilters)
+    .sort((a, b) => {
+      if (sort === 'priceAsc') return a.contractPrice - b.contractPrice;
+      if (sort === 'priceDesc') return b.contractPrice - a.contractPrice;
+      if (sort === 'stock') return stockRank(a.stock) - stockRank(b.stock);
+      return 0;
+    });
+
+  elements.productCount.textContent = `${filtered.length} av ${customer.products.length} avtalevarer vises`;
+
+  elements.productTable.innerHTML = filtered.length
+    ? filtered
+        .map((product) => {
+          const dotClass =
+            product.stock === 'På lager' ? 'dot' : product.stock === 'Lav beholdning' ? 'dot warning' : 'dot danger';
+          return `
+            <div class="table-row" data-sku="${product.sku}">
+              <div class="product-meta">
+                <strong>${product.name}</strong>
+                <p class="small">${product.category} · SKU ${product.sku} · Minstekjøp ${product.minOrder} stk</p>
+              </div>
+              <div class="price-row">
+                <span class="old-price">${product.price.toLocaleString('no-NO')} ,-</span>
+                <span class="new-price">${product.contractPrice.toLocaleString('no-NO')} ,-</span>
+              </div>
+              <div class="stock">
+                <span class="${dotClass}"></span>
+                <div>
+                  <strong>${product.stock}</strong>
+                  <p class="small">Levering: ${product.leadTime}</p>
+                </div>
+              </div>
+              <div class="qty">
+                <input type="number" min="${product.minOrder}" value="${product.minOrder}" aria-label="Antall" />
+                <button class="ghost add-to-cart">Legg i kurv</button>
+              </div>
+              <div class="muted small">Avtalepris låst til din avtale</div>
             </div>
-          </div>
-          <div class="qty">
-            <input type="number" min="${product.minOrder}" value="${product.minOrder}" aria-label="Antall" />
-            <button class="ghost add-to-cart">Legg i kurv</button>
-          </div>
-          <div class="muted small">Avtalepris inkl. rabatt</div>
-        </div>
-      `;
-    })
-    .join('');
+          `;
+        })
+        .join('')
+    : '<div class="empty-state">Ingen avtalevarer matcher filtrene. Nullstill søket eller velg en annen tilgjengelighet.</div>';
 
   elements.productTable.querySelectorAll('.add-to-cart').forEach((button) => {
     button.addEventListener('click', (e) => {
@@ -646,7 +704,11 @@ function renderRoleControls() {
 
 function renderAll() {
   const customer = customers[state.customerKey];
+  elements.productSearch.value = '';
+  elements.sortSelect.value = 'relevance';
+  elements.availabilityFilter.value = 'all';
   renderContractSection(customer);
+  renderInsights(customer);
   renderStatus(customer);
   renderQuickActions(customer);
   renderProducts(customer);
@@ -665,6 +727,8 @@ navButtons.forEach((btn) => {
 });
 
 elements.availabilityFilter.addEventListener('change', () => renderProducts(customers[state.customerKey]));
+elements.productSearch.addEventListener('input', () => renderProducts(customers[state.customerKey]));
+elements.sortSelect.addEventListener('change', () => renderProducts(customers[state.customerKey]));
 
 elements.sendForApproval.addEventListener('click', () => {
   const title = elements.approvalNotes.value || 'Bestilling fra bestiller';
