@@ -115,6 +115,65 @@ const customers = {
         delivery: '1 uke',
       },
     ],
+    architectTools: {
+      briefs: [
+        {
+          client: 'Atelier Oslo (sluttkunde: Lysaker Brygge)',
+          need: 'Serieoppsett for stillesoner og møterom',
+          deliverable: 'Sortiment + avtaleprisark',
+          due: 'Frist: 8. mars',
+          note: 'Skal deles videre til sluttkunde som lenke',
+        },
+        {
+          client: 'Nordbygg HQ – avdeling vest',
+          need: 'Arbeidsplasser (12) + garderobe',
+          deliverable: 'Ferdig tilbud med leveranseplan',
+          due: 'Frist: uke 11',
+          note: 'Tilpasses logistikk i tre del-leveranser',
+        },
+      ],
+      collections: [
+        {
+          name: 'Seriepakke: Nordic Focus (10 plasser)',
+          summary: 'Modulært kontoroppsett med akustikk og ergo',
+          tags: ['Stillesoner', 'Akustikk', 'Ergo'],
+          bundle: [
+            { sku: 'NB-Desk-160', name: 'Nordic skrivebord 160cm', qty: 10 },
+            { sku: 'EP-Chair', name: 'Ergo Pro kontorstol', qty: 10 },
+            { sku: 'SilentWall', name: 'Støydempende skjerm vegg', qty: 10 },
+          ],
+          costCenter: 'Prosjekt 1045',
+        },
+        {
+          name: 'Robust lager + garderobe',
+          summary: 'Reoler med garderobe for tunge soner',
+          tags: ['Lager', 'Garderobe', 'Montasje'],
+          bundle: [
+            { sku: 'HD-Rack', name: 'Heavy Duty pallereol, seksjon', qty: 12 },
+            { sku: 'IG-Double', name: 'Industrigarderobe – dobbelt', qty: 8 },
+          ],
+          costCenter: 'Prosjekt 2078',
+        },
+      ],
+      catalogs: [
+        {
+          name: 'Katalog: Nordbygg vestfløy',
+          format: 'Lenke + PDF',
+          status: 'Oppdatert i dag',
+          note: 'Seriepakker med avtalepris og leveransevindu',
+        },
+        {
+          name: 'Tilbudsutkast: Campus Nydalen',
+          format: 'Deles med prosjektleder',
+          status: 'Klar for godkjenning',
+          note: 'Kan sendes til kunde med kostnadssted inkludert',
+        },
+      ],
+      actions: [
+        { title: 'Bygg katalog fra avtalevarene', description: 'Velg serier og del med sluttkunde', target: 'products' },
+        { title: 'Legg seriepakke i kurv', description: 'Start tilbud og send til godkjenning', target: 'projects' },
+      ],
+    },
     approvals: [
       {
         title: 'Påfyll lager uke 10',
@@ -236,6 +295,66 @@ const customers = {
     packages: [
       { name: 'Startpakke lager', items: 'Kasser, lettreol, jekketraller', delivery: 'Fast rute tirsdag' },
     ],
+    architectTools: {
+      briefs: [
+        {
+          client: 'Fjordlogistikk – terminal Sør',
+          need: 'Seriepakke for 6 møterom',
+          deliverable: 'Lenke til katalog + prisark',
+          due: 'Frist: 14. mars',
+          note: 'Bruk fast rute tirsdag for leveranse',
+        },
+        {
+          client: 'Partner: Nordhavn Eiendom',
+          need: 'Lettlager + kontor for pilot',
+          deliverable: 'Sortiment og kostnadssted for pilotordre',
+          due: 'Frist: uke 12',
+          note: 'Skal være klar til å kopiere for nye lokasjoner',
+        },
+      ],
+      collections: [
+        {
+          name: 'Serie: Fast rute tirsdag',
+          summary: 'Standard sortiment for ukeordre',
+          tags: ['Rute', 'Volum', 'Repeterende'],
+          bundle: [
+            { sku: 'PK-60', name: 'Plastkasser 60L', qty: 30 },
+            { sku: 'SV-10', name: 'Sikkerhetsvest pakke 10', qty: 5 },
+            { sku: 'RL-120', name: 'Reol, lettlager', qty: 8 },
+          ],
+          costCenter: 'Lager 01',
+        },
+        {
+          name: 'Pilotoppsett kontor + lettlager',
+          summary: 'Mikro-kontor kombinert med lettlager',
+          tags: ['Pilot', 'Kontor', 'Lager'],
+          bundle: [
+            { sku: 'SV-10', name: 'Sikkerhetsvest pakke 10', qty: 2 },
+            { sku: 'RL-120', name: 'Reol, lettlager', qty: 6 },
+            { sku: 'PK-60', name: 'Plastkasser 60L', qty: 24 },
+          ],
+          costCenter: 'Prosjekt 3320',
+        },
+      ],
+      catalogs: [
+        {
+          name: 'Katalog: Terminal Bergen',
+          format: 'Delbar lenke',
+          status: 'Oppdatert',
+          note: 'Lister + pakker tilpasset tirsdagsruten',
+        },
+        {
+          name: 'Tilbud: Fast rute volum',
+          format: 'PDF + lenke',
+          status: 'Pågår',
+          note: 'Oppdatere med nye minstekjøp før sending',
+        },
+      ],
+      actions: [
+        { title: 'Lag tilbud for partner', description: 'Bygg katalog med seriepakker', target: 'projects' },
+        { title: 'Kopier sortiment for ny lokasjon', description: 'Gjenbruk ukeordre som basis', target: 'lists' },
+      ],
+    },
     approvals: [
       { title: 'Ukeordre 10', requester: 'Camilla (Bestiller)', status: 'venter', amount: '7 500,-', costCenter: 'Lager 01', roleNeeded: 'Godkjenner' },
     ],
@@ -309,7 +428,7 @@ const orderTracking = {
   ],
 };
 
-const roles = ['Bestiller', 'Godkjenner', 'Fakturamottaker'];
+const roles = ['Bestiller', 'Godkjenner', 'Fakturamottaker', 'Arkitekt'];
 
 const navButtons = document.querySelectorAll('.nav-item');
 const views = document.querySelectorAll('.view');
@@ -322,6 +441,10 @@ const elements = {
   quickActions: document.getElementById('quickActions'),
   statusGrid: document.getElementById('statusGrid'),
   insightGrid: document.getElementById('insightGrid'),
+  architectPanel: document.getElementById('architectPanel'),
+  architectBriefs: document.getElementById('architectBriefs'),
+  architectCollections: document.getElementById('architectCollections'),
+  architectCatalogs: document.getElementById('architectCatalogs'),
   productTable: document.getElementById('productTable'),
   productSearch: document.getElementById('productSearch'),
   productCount: document.getElementById('productCount'),
@@ -419,7 +542,10 @@ function renderStatus(customer) {
 }
 
 function renderQuickActions(customer) {
-  elements.quickActions.innerHTML = customer.quickActions
+  const roleActions = state.role === 'Arkitekt' ? customer.architectTools?.actions || [] : [];
+  const actions = [...customer.quickActions, ...roleActions];
+
+  elements.quickActions.innerHTML = actions
     .map(
       (action) => `
         <button class="quick-btn" data-target="${action.target}">
@@ -432,6 +558,129 @@ function renderQuickActions(customer) {
 
   elements.quickActions.querySelectorAll('button').forEach((btn) => {
     btn.addEventListener('click', () => setActiveSection(btn.dataset.target));
+  });
+}
+
+function renderArchitectTools(customer) {
+  if (!elements.architectPanel) return;
+  const tools = customer.architectTools;
+
+  if (!tools || state.role !== 'Arkitekt') {
+    elements.architectPanel.classList.add('hidden');
+    return;
+  }
+
+  elements.architectPanel.classList.remove('hidden');
+
+  const briefs = tools.briefs || [];
+  const collections = tools.collections || [];
+  const catalogs = tools.catalogs || [];
+
+  elements.architectBriefs.innerHTML = briefs.length
+    ? briefs
+        .map(
+          (brief, index) => `
+            <article class="architect-card" data-index="${index}">
+              <div class="label-row">
+                <strong>${brief.client}</strong>
+                <span class="pill soft">${brief.due}</span>
+              </div>
+              <p class="hint">${brief.need}</p>
+              <div class="architect-meta">
+                <span>${brief.deliverable}</span>
+                <span>${brief.note}</span>
+              </div>
+              <div class="actions">
+                <button class="primary" data-action="catalog">Bygg forslag</button>
+                <button class="ghost" data-action="approve">Send til godkjenning</button>
+              </div>
+            </article>
+          `
+        )
+        .join('')
+    : '<p class="hint">Ingen arkitekt-forespørsler akkurat nå.</p>';
+
+  elements.architectBriefs.querySelectorAll('.actions button').forEach((btn) => {
+    const brief = briefs[Number(btn.closest('[data-index]')?.dataset.index)];
+    btn.addEventListener('click', () => {
+      if (!brief) return;
+      if (btn.dataset.action === 'catalog') {
+        setActiveSection('products');
+        showToast('Starter forslag med avtalesortiment');
+      } else {
+        pushApproval(`${brief.deliverable} (${brief.client})`, brief.client);
+        showToast('Forslaget er sendt til godkjenning');
+      }
+    });
+  });
+
+  elements.architectCollections.innerHTML = collections.length
+    ? collections
+        .map(
+          (collection, index) => `
+            <article class="architect-card" data-index="${index}">
+              <div class="label-row">
+                <strong>${collection.name}</strong>
+                <span class="pill">${collection.costCenter || 'Kostnadssted TBD'}</span>
+              </div>
+              <p class="hint">${collection.summary}</p>
+              <div class="tag-row">
+                ${(collection.tags || []).map((tag) => `<span class="pill soft">${tag}</span>`).join('')}
+              </div>
+              <div class="actions">
+                <button class="primary" data-action="cart">Legg i kurv</button>
+                <button class="ghost" data-action="approval">Send tilbud</button>
+              </div>
+            </article>
+          `
+        )
+        .join('')
+    : '<p class="hint">Ingen seriepakker valgt ennå.</p>';
+
+  elements.architectCollections.querySelectorAll('.actions button').forEach((btn) => {
+    const collection = collections[Number(btn.closest('[data-index]')?.dataset.index)];
+    btn.addEventListener('click', () => {
+      if (!collection) return;
+      if (btn.dataset.action === 'cart') {
+        addCollectionToCart(collection);
+      } else {
+        pushApproval(collection.name, collection.costCenter || 'Kostnadssted mangler');
+        showToast('Tilbudsutkastet er sendt til godkjenning');
+      }
+    });
+  });
+
+  elements.architectCatalogs.innerHTML = catalogs.length
+    ? catalogs
+        .map(
+          (catalog) => `
+            <article class="architect-card">
+              <div class="label-row">
+                <strong>${catalog.name}</strong>
+                <span class="pill soft">${catalog.status}</span>
+              </div>
+              <p class="hint">${catalog.format}</p>
+              <p class="small">${catalog.note}</p>
+              <div class="actions">
+                <button class="primary" data-action="share">Del med kunde</button>
+                <button class="ghost" data-action="approval">Send til godkjenning</button>
+              </div>
+            </article>
+          `
+        )
+        .join('')
+    : '<p class="hint">Ingen delbare kataloger er klare ennå.</p>';
+
+  elements.architectCatalogs.querySelectorAll('.actions button').forEach((btn) => {
+    const catalogName = btn.closest('.architect-card')?.querySelector('strong')?.textContent || 'Katalog';
+    btn.addEventListener('click', () => {
+      if (btn.dataset.action === 'share') {
+        showToast('Delbar lenke kopiert (demo)');
+      } else {
+        pushApproval(`Godkjenn katalog: ${catalogName}`, 'Prosjekt / avtale');
+        showToast('Katalog sendt til godkjenning');
+      }
+    });
   });
 }
 
@@ -852,6 +1101,25 @@ function addProjectToCart(sale) {
   showToast(`Prosjektet "${sale.name}" er lagt i kurv med avtalepris`);
 }
 
+function addCollectionToCart(collection) {
+  const customer = customers[state.customerKey];
+  collection.bundle.forEach((line) => {
+    const product =
+      customer.products.find((p) => p.sku === line.sku) || {
+        name: line.name,
+        sku: line.sku,
+        contractPrice: line.contractPrice ?? line.price ?? 0,
+        price: line.price ?? line.contractPrice ?? 0,
+        stock: 'Arkitektforslag',
+        leadTime: 'Avtales etter prosjekt',
+        minOrder: 1,
+      };
+    addToCart(product, line.qty, { silent: true });
+  });
+  renderCart();
+  showToast(`"${collection.name}" lagt i kurv for tilbud`);
+}
+
 function pushApproval(title, costCenter) {
   const customer = customers[state.customerKey];
   customer.approvals.unshift({
@@ -872,20 +1140,26 @@ function renderRoleControls() {
 
   elements.roleOptions.querySelectorAll('button').forEach((btn) =>
     btn.addEventListener('click', () => {
+      const customer = customers[state.customerKey];
       state.role = btn.dataset.role;
       renderRoleControls();
       renderCart();
-      renderApprovals(customers[state.customerKey]);
+      renderApprovals(customer);
+      renderQuickActions(customer);
+      renderArchitectTools(customer);
     })
   );
 
   elements.approvalRole.innerHTML = roles.map((role) => `<option value="${role}">${role}</option>`).join('');
   elements.approvalRole.value = state.role;
   elements.approvalRole.onchange = (e) => {
+    const customer = customers[state.customerKey];
     state.role = e.target.value;
     renderRoleControls();
     renderCart();
-    renderApprovals(customers[state.customerKey]);
+    renderApprovals(customer);
+    renderQuickActions(customer);
+    renderArchitectTools(customer);
   };
 }
 
@@ -898,6 +1172,7 @@ function renderAll() {
   renderInsights(customer);
   renderStatus(customer);
   renderQuickActions(customer);
+  renderArchitectTools(customer);
   renderProducts(customer);
   renderLists(customer);
   renderPackages(customer);
