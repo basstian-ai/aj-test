@@ -1,0 +1,247 @@
+<!doctype html>
+<html lang="no">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Kontraktskunde-portal | Nordic Workspace Supply</title>
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
+    />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <div class="page">
+      <header class="topbar">
+        <div class="brand">
+          <div class="logo">NW</div>
+          <div>
+            <p class="eyebrow">Kontraktskunde-portal</p>
+            <h1>Nordic Workspace Supply</h1>
+          </div>
+        </div>
+        <div class="session">
+          <div class="session-select">
+            <label for="customerSelect">Innlogget som</label>
+            <select id="customerSelect" aria-label="Velg kontraktskunde">
+              <option value="nordbygg">Nordbygg AS (kontraktskunde)</option>
+              <option value="fjordlogistikk">Fjordlogistikk (rammeavtale)</option>
+            </select>
+          </div>
+          <div class="role-switch">
+            <label for="roleSelect">Aktiv rolle</label>
+            <div class="role-options" id="roleOptions"></div>
+          </div>
+        </div>
+      </header>
+
+      <nav class="nav" aria-label="Hovednavigasjon">
+        <button class="nav-item active" data-target="dashboard">Min side</button>
+        <button class="nav-item" data-target="products">Mine avtalevarer</button>
+        <button class="nav-item" data-target="lists">Lister &amp; pakker</button>
+        <button class="nav-item" data-target="approvals">Godkjenningsflyt</button>
+        <button class="nav-item" data-target="support">Kundeservice</button>
+        <button class="nav-item" data-target="projects">Prosjekt / leveranse</button>
+      </nav>
+
+      <main>
+        <section id="dashboard" class="view active" aria-labelledby="Dashboard">
+          <div class="intro">
+            <div>
+              <p class="eyebrow">Kontroll &amp; fart</p>
+              <h2>Alt som gjelder avtalen, samlet på ett sted</h2>
+              <p>
+                Tidsbesparende gjenkjøp, forutsigbare leveranser og direkte kontaktpunkt for
+                kontraktskunder. Ingen kampanjer – bare det som er relevant for din avtale.
+              </p>
+            </div>
+            <div class="badge-group" id="contractBadges"></div>
+          </div>
+
+          <div class="card-grid">
+            <div class="card">
+              <div class="card-head">
+                <div>
+                  <p class="eyebrow">Firma og avtale</p>
+                  <h3 id="companyName">Nordbygg AS</h3>
+                </div>
+                <span class="pill" id="contractId">Avtale-ID: K-98231</span>
+              </div>
+              <dl class="definition-list" id="contractDetails"></dl>
+            </div>
+
+            <div class="card">
+              <div class="card-head">
+                <p class="eyebrow">Hurtighandlinger</p>
+                <h3>Bare handlinger som sparer tid</h3>
+              </div>
+              <div class="quick-actions" id="quickActions"></div>
+            </div>
+          </div>
+
+          <div class="status-grid" id="statusGrid"></div>
+        </section>
+
+        <section id="products" class="view" aria-labelledby="Mine avtalevarer">
+          <div class="section-head">
+            <div>
+              <p class="eyebrow">Avtalevarer</p>
+              <h2>Forhåndsvalgt sortiment med avtalepris</h2>
+              <p>Ingen støy – kun produktene i avtalen, med lagerstatus og leveringstid.</p>
+            </div>
+            <div class="filters">
+              <label for="availabilityFilter">Vis</label>
+              <select id="availabilityFilter">
+                <option value="all">Alle</option>
+                <option value="inStock">På lager</option>
+                <option value="onOrder">Under innkjøp</option>
+              </select>
+            </div>
+          </div>
+          <div class="table" role="table" aria-label="Avtaleprodukter" id="productTable"></div>
+        </section>
+
+        <section id="lists" class="view" aria-labelledby="Lister og pakker">
+          <div class="section-head">
+            <div>
+              <p class="eyebrow">Gjenkjøp</p>
+              <h2>Lagrede lister og standardpakker</h2>
+              <p>Gjør repeterende bestillinger på sekunder, eller send til godkjenning.</p>
+            </div>
+          </div>
+
+          <div class="card-grid two-col">
+            <div class="card">
+              <div class="card-head">
+                <p class="eyebrow">Mine lister</p>
+                <h3>Forbruk du bestiller ofte</h3>
+              </div>
+              <div id="listContainer" class="stack"></div>
+            </div>
+
+            <div class="card">
+              <div class="card-head">
+                <p class="eyebrow">Standardpakker</p>
+                <h3>Klare oppsett for nye avdelinger</h3>
+              </div>
+              <div id="packageContainer" class="stack"></div>
+            </div>
+          </div>
+        </section>
+
+        <section id="approvals" class="view" aria-labelledby="Godkjenningsflyt">
+          <div class="section-head">
+            <div>
+              <p class="eyebrow">Kontroll</p>
+              <h2>Innebygd godkjenningsflyt</h2>
+              <p>Bestiller sender, godkjenner godkjenner, fakturamottaker får full kontroll.</p>
+            </div>
+            <div class="approval-toggle">
+              <label for="approvalRole">Arbeid som</label>
+              <select id="approvalRole"></select>
+            </div>
+          </div>
+
+          <div class="card-grid two-col">
+            <div class="card">
+              <div class="card-head spaced">
+                <div>
+                  <p class="eyebrow">Send til godkjenning</p>
+                  <h3>Legg inn bestillingen</h3>
+                </div>
+                <button class="ghost" id="sendForApproval">Send ordre</button>
+              </div>
+              <div class="form-grid">
+                <label>
+                  Ordrebeskrivelse
+                  <textarea id="approvalNotes" rows="3" placeholder="F.eks. Påfyll lager uke 12"></textarea>
+                </label>
+                <label>
+                  Kostnadssted
+                  <input id="costCenter" placeholder="Velg kostnadssted" value="Prosjekt 1045" />
+                </label>
+              </div>
+              <p class="hint">Bestiller kan kun sende – godkjenner må godkjenne før ordre sendes til lager.</p>
+            </div>
+
+            <div class="card">
+              <div class="card-head">
+                <p class="eyebrow">Status</p>
+                <h3>Åpne godkjenninger</h3>
+              </div>
+              <div id="approvalList" class="stack"></div>
+            </div>
+          </div>
+        </section>
+
+        <section id="support" class="view" aria-labelledby="Kundeservice">
+          <div class="section-head">
+            <div>
+              <p class="eyebrow">Support nært kjøpsreisen</p>
+              <h2>Kundeservice med prioritet for kontraktskunder</h2>
+              <p>Se åpne saker, spor ordre og kontakt din faste rådgiver direkte.</p>
+            </div>
+          </div>
+          <div class="card-grid two-col">
+            <div class="card">
+              <div class="card-head spaced">
+                <div>
+                  <p class="eyebrow">Åpne saker</p>
+                  <h3>Opprett, følg opp eller legg til dokumentasjon</h3>
+                </div>
+                <button class="ghost" id="newCase">Opprett ny sak</button>
+              </div>
+              <div id="caseList" class="stack"></div>
+            </div>
+
+            <div class="card contact">
+              <div class="card-head">
+                <p class="eyebrow">Kontakt oss</p>
+                <h3>Direkte kontaktpunkt</h3>
+              </div>
+              <div class="contact-person" id="contactPerson"></div>
+              <div class="links">
+                <button class="ghost">Ordresporing</button>
+                <button class="ghost">Retur / reklamasjon</button>
+                <button class="ghost">Fakturaspørsmål</button>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section id="projects" class="view" aria-labelledby="Prosjektvisning">
+          <div class="section-head">
+            <div>
+              <p class="eyebrow">Prosjekter</p>
+              <h2>Prosjekt- og leveranseoversikt</h2>
+              <p>Se del-leveranser, grupperte ordre og kopier tidligere oppsett.</p>
+            </div>
+          </div>
+          <div id="projectList" class="stack"></div>
+        </section>
+      </main>
+
+      <aside class="sidebar">
+        <div class="mini-card">
+          <p class="eyebrow">Handlekurv</p>
+          <h3 id="cartTitle">Tom</h3>
+          <div id="cartItems" class="stack small"></div>
+          <div class="cart-summary" id="cartSummary"></div>
+          <button class="primary" id="checkout">Send til godkjenning</button>
+        </div>
+
+        <div class="mini-card muted">
+          <p class="eyebrow">Demo-notat</p>
+          <p class="small">
+            Alt innhold er fiktivt og lagres lokalt i nettleseren. Viser personaliserte
+            avtalepriser, gjenkjøp, godkjenning og kundeservice på samme flate.
+          </p>
+        </div>
+      </aside>
+    </div>
+
+    <div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+    <script src="script.js"></script>
+  </body>
+</html>
