@@ -701,6 +701,152 @@ label {
   transform: translateY(0);
 }
 
+.tracking-modal {
+  position: fixed;
+  inset: 0;
+  background: rgba(11, 18, 32, 0.32);
+  display: none;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  z-index: 20;
+}
+
+.tracking-modal.show {
+  display: flex;
+}
+
+.tracking-dialog {
+  background: var(--background);
+  border-radius: 18px;
+  border: 1px solid var(--border);
+  box-shadow: 0 28px 64px rgba(11, 18, 32, 0.24);
+  width: min(1100px, 100%);
+  max-height: 90vh;
+  overflow: auto;
+  padding: 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.tracking-head {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  align-items: flex-start;
+}
+
+.tracking-head .actions {
+  display: flex;
+  gap: 8px;
+}
+
+.tracking-timeline {
+  position: relative;
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 14px 6px 12px;
+}
+
+.tracking-timeline::before {
+  content: '';
+  position: absolute;
+  left: 12px;
+  right: 12px;
+  top: 22px;
+  height: 2px;
+  background: #e6e7eb;
+}
+
+.tracking-step {
+  position: relative;
+  display: grid;
+  gap: 6px;
+  align-items: flex-start;
+  text-align: center;
+  flex: 1 1 0;
+}
+
+.tracking-node {
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  border: 5px solid #e5e7eb;
+  background: #fff;
+  margin: 0 auto;
+  position: relative;
+  z-index: 1;
+}
+
+.tracking-step.completed .tracking-node {
+  background: var(--accent);
+  border-color: var(--accent);
+  box-shadow: 0 0 0 6px #fde3e5;
+}
+
+.tracking-step.pending .tracking-node {
+  background: #fff;
+  border-color: #e5e7eb;
+}
+
+.tracking-step strong {
+  color: var(--ink);
+}
+
+.tracking-meta-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: #f9fafb;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 10px 12px;
+  color: var(--muted-ink);
+}
+
+.tracking-info-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 12px;
+}
+
+.tracking-card {
+  background: #fdfbfb;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 12px;
+  display: grid;
+  gap: 6px;
+  min-height: 140px;
+}
+
+.summary-list {
+  display: grid;
+  gap: 8px;
+}
+
+.summary-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  color: var(--muted-ink);
+}
+
+.summary-row strong {
+  color: var(--ink);
+}
+
+.summary-row.emphasize strong {
+  font-size: 16px;
+}
+
+.tracking-buyer strong {
+  display: block;
+  margin-bottom: 2px;
+}
+
 .sidebar {
   display: flex;
   flex-direction: column;

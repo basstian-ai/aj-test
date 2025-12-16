@@ -235,7 +235,7 @@
               </div>
               <div class="contact-person" id="contactPerson"></div>
               <div class="links">
-                <button class="ghost">Ordresporing</button>
+                <button class="ghost" id="orderTracking">Ordresporing</button>
                 <button class="ghost">Retur / reklamasjon</button>
                 <button class="ghost">Fakturaspørsmål</button>
               </div>
@@ -275,6 +275,40 @@
     </div>
 
     <div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+    <div class="tracking-modal" id="trackingModal" aria-hidden="true">
+      <div class="tracking-dialog" id="trackingDialog" role="dialog" aria-modal="true" aria-labelledby="trackingTitle">
+        <div class="tracking-head">
+          <div>
+            <p class="eyebrow">Ordresporing</p>
+            <h3 id="trackingTitle"></h3>
+            <p class="hint" id="trackingMeta"></p>
+          </div>
+          <div class="actions">
+            <button class="ghost" id="trackingClose">Lukk</button>
+            <button class="primary" id="trackingAddToCart">Legg hele ordren i kurv</button>
+          </div>
+        </div>
+
+        <div class="tracking-timeline" id="trackingTimeline"></div>
+        <div class="tracking-meta-row" id="trackingShipping"></div>
+
+        <div class="tracking-info-grid">
+          <div class="tracking-card">
+            <p class="eyebrow">Leveringsadresse</p>
+            <div class="hint" id="trackingAddress"></div>
+          </div>
+          <div class="tracking-card">
+            <p class="eyebrow">Kjøper</p>
+            <div id="trackingBuyer" class="tracking-buyer"></div>
+          </div>
+          <div class="tracking-card">
+            <p class="eyebrow">Oppsummering</p>
+            <div id="trackingSummary" class="summary-list"></div>
+          </div>
+        </div>
+      </div>
+    </div>
 
     <script src="script.js"></script>
   </body>
