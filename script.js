@@ -283,7 +283,7 @@ function renderStatus(customer) {
   elements.statusGrid.innerHTML = customer.statuses
     .map(
       (status) => `
-        <article class="status-card">
+        <article class="status-card tone-${status.tone}">
           <div class="label-row">
             <h4>${status.title}</h4>
             <span class="pill">${status.pill}</span>
