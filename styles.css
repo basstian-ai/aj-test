@@ -128,6 +128,8 @@ textarea {
   background: var(--background);
   color: var(--ink);
   box-shadow: 0 6px 14px rgba(11, 18, 32, 0.04);
+  width: 100%;
+  max-width: 100%;
 }
 
 textarea {
