@@ -231,6 +231,30 @@ const state = {
   cart: [],
 };
 
+const orderTracking = {
+  orderNumber: 'NO220928-00005',
+  customerReference: '11932',
+  orderName: 'Set order name',
+  shippingDate: '12.10.2022',
+  buyer: 'Ingebrigt Breistøl',
+  address: ['Kirkevold Kontorutstyr AS', 'Akersgt. 7', '0158 OSLO', 'Norway'],
+  summary: [
+    { label: 'Pris før MVA', value: '6 491,10 NOK' },
+    { label: 'MVA (25%)', value: '1 622,78 NOK' },
+    { label: 'Pris inkl. MVA', value: '8 113,88 NOK' },
+    { label: 'Frakt', value: 'Etter avtale' },
+    { label: 'Total', value: '8 113,88 NOK', emphasize: true },
+  ],
+  steps: [
+    { label: 'Placed', date: '28.09.2022', state: 'done' },
+    { label: 'Confirmed', date: '28.09.2022', state: 'done' },
+    { label: 'In production', date: '12.10.2022', state: 'done' },
+    { label: 'Shipped', date: '12.10.2022', state: 'done' },
+    { label: 'Invoiced', date: '12.10.2022', state: 'done' },
+    { label: 'Shipping date', date: '12.10.2022', state: 'upcoming', note: 'Track order' },
+  ],
+};
+
 const roles = ['Bestiller', 'Godkjenner', 'Fakturamottaker'];
 
 const navButtons = document.querySelectorAll('.nav-item');
@@ -267,6 +291,18 @@ const elements = {
   customerSelect: document.getElementById('customerSelect'),
   roleOptions: document.getElementById('roleOptions'),
   toast: document.getElementById('toast'),
+  orderTracking: document.getElementById('orderTracking'),
+  trackingModal: document.getElementById('trackingModal'),
+  trackingDialog: document.getElementById('trackingDialog'),
+  trackingTimeline: document.getElementById('trackingTimeline'),
+  trackingAddress: document.getElementById('trackingAddress'),
+  trackingBuyer: document.getElementById('trackingBuyer'),
+  trackingSummary: document.getElementById('trackingSummary'),
+  trackingMeta: document.getElementById('trackingMeta'),
+  trackingTitle: document.getElementById('trackingTitle'),
+  trackingShipping: document.getElementById('trackingShipping'),
+  trackingClose: document.getElementById('trackingClose'),
+  trackingAddToCart: document.getElementById('trackingAddToCart'),
 };
 
 function showToast(message) {
@@ -721,6 +757,48 @@ function renderAll() {
   renderRoleControls();
 }
 
+function renderTrackingModal() {
+  elements.trackingTitle.textContent = `Ordre ${orderTracking.orderNumber}`;
+  elements.trackingMeta.innerHTML = `Din referanse: <strong>${orderTracking.customerReference}</strong> · Ordrenavn: <span class="muted">${orderTracking.orderName}</span>`;
+
+  elements.trackingTimeline.innerHTML = orderTracking.steps
+    .map(
+      (step) => `
+        <div class="tracking-step ${step.state === 'done' ? 'completed' : 'pending'}">
+          <div class="tracking-node"></div>
+          <div>
+            <strong>${step.label}</strong>
+            <p class="small">${step.date}</p>
+            ${step.note ? `<p class="hint">${step.note}</p>` : ''}
+          </div>
+        </div>
+      `
+    )
+    .join('');
+
+  elements.trackingShipping.textContent = `Estimert leveringsdato: ${orderTracking.shippingDate} · Dummyflyt for ordrenivå`;
+  elements.trackingAddress.innerHTML = orderTracking.address.join('<br />');
+  elements.trackingBuyer.innerHTML = `<strong>${orderTracking.buyer}</strong><p class="small">Kontraktskunde</p>`;
+  elements.trackingSummary.innerHTML = orderTracking.summary
+    .map(
+      (row) => `
+        <div class="summary-row${row.emphasize ? ' emphasize' : ''}">
+          <span>${row.label}</span>
+          <strong>${row.value}</strong>
+        </div>
+      `
+    )
+    .join('');
+}
+
+function toggleTrackingModal(show) {
+  if (show) {
+    renderTrackingModal();
+  }
+  elements.trackingModal.classList.toggle('show', show);
+  elements.trackingModal.setAttribute('aria-hidden', (!show).toString());
+}
+
 // Event bindings
 navButtons.forEach((btn) => {
   btn.addEventListener('click', () => setActiveSection(btn.dataset.target));
@@ -729,6 +807,25 @@ navButtons.forEach((btn) => {
 elements.availabilityFilter.addEventListener('change', () => renderProducts(customers[state.customerKey]));
 elements.productSearch.addEventListener('input', () => renderProducts(customers[state.customerKey]));
 elements.sortSelect.addEventListener('change', () => renderProducts(customers[state.customerKey]));
+
+elements.orderTracking.addEventListener('click', () => toggleTrackingModal(true));
+elements.trackingClose.addEventListener('click', () => toggleTrackingModal(false));
+elements.trackingModal.addEventListener('click', (event) => {
+  if (event.target === elements.trackingModal) {
+    toggleTrackingModal(false);
+  }
+});
+
+document.addEventListener('keydown', (event) => {
+  if (event.key === 'Escape' && elements.trackingModal.classList.contains('show')) {
+    toggleTrackingModal(false);
+  }
+});
+
+elements.trackingAddToCart.addEventListener('click', () => {
+  showToast('Hele ordren lagt til i kurv (demo)');
+  toggleTrackingModal(false);
+});
 
 elements.sendForApproval.addEventListener('click', () => {
   const title = elements.approvalNotes.value || 'Bestilling fra bestiller';
