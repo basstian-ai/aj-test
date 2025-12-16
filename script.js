@@ -144,6 +144,41 @@ const customers = {
       email: 'ingrid@nwsupply.no',
       availability: '08–17, svar innen 1 time',
     },
+    projectSales: [
+      {
+        name: 'Campus Nydalen – kontorbygg',
+        stage: 'Prosjektordre klar',
+        value: '1,25 MNOK avtalepris',
+        readiness: 0.78,
+        nextStep: 'Bekreft leveransevindu uke 15',
+        deliveryPlan: '3 del-leveranser med montasje',
+        owner: 'Ida (Prosjektsalg)',
+        costCenter: 'Prosjekt 1045',
+        scopes: ['Arbeidsplasser (18)', 'Møterom og akustikk', 'Montasje og logistikk'],
+        bundle: [
+          { sku: 'NB-Desk-160', name: 'Nordic skrivebord 160cm', qty: 18 },
+          { sku: 'EP-Chair', name: 'Ergo Pro kontorstol', qty: 18 },
+          { sku: 'SilentWall', name: 'Støydempende skjerm vegg', qty: 10 },
+          { sku: 'IG-Double', name: 'Industrigarderobe – dobbelt', qty: 6 },
+          { sku: 'SERV-MONT', name: 'Montasje og logistikk', qty: 1, contractPrice: 8500, price: 8500 },
+        ],
+      },
+      {
+        name: 'Drammen lager fase 2',
+        stage: 'Tilbudsgrunnlag klart',
+        value: '640 000,- estimert',
+        readiness: 0.62,
+        nextStep: 'Godkjenn leveranseplan 2/3',
+        deliveryPlan: '2 leveranser med montasje og frakt',
+        owner: 'Lars (Prosjekt)',
+        costCenter: 'Prosjekt 2078',
+        scopes: ['Tunglager-reoler', 'Montasje inkl. stillas', 'Frakt ekspress'],
+        bundle: [
+          { sku: 'HD-Rack', name: 'Heavy Duty pallereol, seksjon', qty: 22 },
+          { sku: 'SERV-MONT', name: 'Montasje og logistikk', qty: 1, contractPrice: 12500, price: 12500 },
+        ],
+      },
+    ],
     projects: [
       {
         name: 'Utvidelse Drammen lager',
@@ -212,6 +247,25 @@ const customers = {
       email: 'erik@nwsupply.no',
       availability: '08–16, svar innen 2 timer',
     },
+    projectSales: [
+      {
+        name: 'Terminal Bergen – prosjektordre',
+        stage: 'Tilbud sendt',
+        value: '420 000,- estimert',
+        readiness: 0.55,
+        nextStep: 'Avklar kostnadssted og levering',
+        deliveryPlan: 'Leveranse i to puljer via tirsdagsruten',
+        owner: 'Erik (Prosjektsalg)',
+        costCenter: 'Prosjekt 3320',
+        scopes: ['Reoler lettlager', 'Kontor 8 plasser', 'Leveranse via fast rute'],
+        bundle: [
+          { sku: 'PK-60', name: 'Plastkasser 60L', qty: 60 },
+          { sku: 'SV-10', name: 'Sikkerhetsvest pakke 10', qty: 3 },
+          { sku: 'RL-120', name: 'Reol, lettlager', qty: 12 },
+          { sku: 'SERV-ROUTE', name: 'Prosjektleveranse tirsdag', qty: 1, contractPrice: 5200, price: 5200 },
+        ],
+      },
+    ],
     projects: [
       {
         name: 'Terminal Bergen',
@@ -283,6 +337,7 @@ const elements = {
   caseList: document.getElementById('caseList'),
   newCase: document.getElementById('newCase'),
   contactPerson: document.getElementById('contactPerson'),
+  projectSales: document.getElementById('projectSales'),
   projectList: document.getElementById('projectList'),
   cartItems: document.getElementById('cartItems'),
   cartSummary: document.getElementById('cartSummary'),
@@ -605,7 +660,76 @@ function renderSupport(customer) {
   `;
 }
 
-function renderProjects(customer) {
+function renderProjectSales(customer) {
+  elements.projectSales.innerHTML = customer.projectSales
+    .map((sale, index) => {
+      const progress = Math.round(sale.readiness * 100);
+      return `
+        <article class="project-card project-sale" data-index="${index}">
+          <header>
+            <div>
+              <strong>${sale.name}</strong>
+              <p class="small">${sale.stage} · ${sale.owner}</p>
+            </div>
+            <div class="actions">
+              <button class="ghost" data-action="approve">Send prosjektordre</button>
+              <button class="ghost" data-action="cart">Legg i kurv</button>
+            </div>
+          </header>
+          <div class="project-sale-meta">
+            <div>
+              <p class="eyebrow">Verdi</p>
+              <strong>${sale.value}</strong>
+              <p class="hint">Kostnadssted: ${sale.costCenter}</p>
+            </div>
+            <div>
+              <p class="eyebrow">Fremdrift</p>
+              <div class="progress-track" role="presentation">
+                <div class="progress-value" style="width: ${progress}%;"></div>
+              </div>
+              <p class="small">${progress}% klart · Neste: ${sale.nextStep}</p>
+            </div>
+            <div>
+              <p class="eyebrow">Leveranseplan</p>
+              <p class="hint">${sale.deliveryPlan}</p>
+            </div>
+          </div>
+          <div class="project-sale-scope">
+            ${sale.scopes.map((scope) => `<span class="pill soft">${scope}</span>`).join('')}
+          </div>
+          <div class="project-sale-lines">
+            ${sale.bundle
+              .map(
+                (line) => `
+                  <div class="label-row small">
+                    <span>${line.qty} × ${line.name}</span>
+                    <span class="pill">${line.sku}</span>
+                  </div>
+                `
+              )
+              .join('')}
+          </div>
+        </article>
+      `;
+    })
+    .join('');
+
+  elements.projectSales.querySelectorAll('.project-card').forEach((card) => {
+    const sale = customer.projectSales[Number(card.dataset.index)];
+    card.querySelectorAll('button').forEach((btn) => {
+      btn.addEventListener('click', () => {
+        if (btn.dataset.action === 'approve') {
+          pushApproval(sale.name, sale.costCenter);
+          showToast('Prosjektordre sendt til godkjenning');
+        } else if (btn.dataset.action === 'cart') {
+          addProjectToCart(sale);
+        }
+      });
+    });
+  });
+}
+
+function renderProjectDeliveries(customer) {
   elements.projectList.innerHTML = customer.projects
     .map(
       (project) => `
@@ -690,15 +814,42 @@ function renderCart() {
   };
 }
 
-function addToCart(product, qty) {
+function addToCart(product, qty, options = {}) {
+  const { silent = false } = options;
   const existing = state.cart.find((item) => item.sku === product.sku);
   if (existing) {
     existing.qty += qty;
   } else {
-    state.cart.push({ ...product, qty });
+    state.cart.push({
+      ...product,
+      contractPrice: product.contractPrice ?? product.price ?? 0,
+      price: product.price ?? product.contractPrice ?? 0,
+      qty,
+    });
   }
   renderCart();
-  showToast(`${product.name} (${qty} stk) lagt til med avtalepris`);
+  if (!silent) {
+    showToast(`${product.name} (${qty} stk) lagt til med avtalepris`);
+  }
+}
+
+function addProjectToCart(sale) {
+  const customer = customers[state.customerKey];
+  sale.bundle.forEach((line) => {
+    const product =
+      customer.products.find((p) => p.sku === line.sku) || {
+        name: line.name,
+        sku: line.sku,
+        contractPrice: line.contractPrice ?? line.price ?? 0,
+        price: line.price ?? line.contractPrice ?? 0,
+        stock: 'Prosjektsalg',
+        leadTime: sale.deliveryPlan,
+        minOrder: 1,
+      };
+    addToCart(product, line.qty, { silent: true });
+  });
+  renderCart();
+  showToast(`Prosjektet "${sale.name}" er lagt i kurv med avtalepris`);
 }
 
 function pushApproval(title, costCenter) {
@@ -752,7 +903,8 @@ function renderAll() {
   renderPackages(customer);
   renderApprovals(customer);
   renderSupport(customer);
-  renderProjects(customer);
+  renderProjectSales(customer);
+  renderProjectDeliveries(customer);
   renderCart();
   renderRoleControls();
 }
