@@ -764,8 +764,8 @@ function renderProducts(customer) {
 function renderLists(customer) {
   elements.listContainer.innerHTML = customer.lists
     .map(
-      (list) => `
-        <article class="list-card">
+      (list, index) => `
+        <article class="list-card" data-index="${index}">
           <header>
             <div>
               <strong>${list.name}</strong>
@@ -784,8 +784,11 @@ function renderLists(customer) {
     .join('');
 
   elements.listContainer.querySelectorAll('.actions button').forEach((button) => {
+    const list = customer.lists[Number(button.closest('[data-index]')?.dataset.index)];
     button.addEventListener('click', () => {
       if (button.dataset.action === 'cart') {
+        if (!list) return;
+        addListToCart(list);
         showToast('Liste lagt i kurv med avtalepriser');
       } else {
         pushApproval('Liste sendt til godkjenning', 'Lager 02');
@@ -797,8 +800,8 @@ function renderLists(customer) {
 function renderPackages(customer) {
   elements.packageContainer.innerHTML = customer.packages
     .map(
-      (pack) => `
-        <article class="package-card">
+      (pack, index) => `
+        <article class="package-card" data-index="${index}">
           <header>
             <div>
               <strong>${pack.name}</strong>
@@ -816,8 +819,11 @@ function renderPackages(customer) {
     .join('');
 
   elements.packageContainer.querySelectorAll('button').forEach((button) => {
+    const pack = customer.packages[Number(button.closest('[data-index]')?.dataset.index)];
     button.addEventListener('click', () => {
       if (button.dataset.action === 'cart') {
+        if (!pack) return;
+        addPackageToCart(pack);
         showToast('Pakke lagt i kurv');
       } else {
         pushApproval('Standardpakke til godkjenning', 'Prosjekt 1045');
@@ -1118,6 +1124,41 @@ function addCollectionToCart(collection) {
   });
   renderCart();
   showToast(`"${collection.name}" lagt i kurv for tilbud`);
+}
+
+function addListToCart(list) {
+  const lineCount = list.items || 1;
+  const estimatedPrice = lineCount * 420;
+  addToCart(
+    {
+      name: list.name,
+      sku: `LIST-${state.customerKey}-${list.name.replace(/\s+/g, '-').toUpperCase()}`,
+      category: 'Liste',
+      contractPrice: estimatedPrice,
+      price: estimatedPrice,
+      stock: 'Liste',
+      leadTime: 'Avtalelevering',
+      minOrder: 1,
+    },
+    1
+  );
+}
+
+function addPackageToCart(pack) {
+  const estimatedPrice = 6500;
+  addToCart(
+    {
+      name: pack.name,
+      sku: `PACK-${state.customerKey}-${pack.name.replace(/\s+/g, '-').toUpperCase()}`,
+      category: 'Pakke',
+      contractPrice: estimatedPrice,
+      price: estimatedPrice,
+      stock: 'Pakke',
+      leadTime: pack.delivery,
+      minOrder: 1,
+    },
+    1
+  );
 }
 
 function pushApproval(title, costCenter) {
